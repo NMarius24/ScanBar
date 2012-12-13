@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,13 +15,15 @@ public class Product {
 	private String name, description, image, code;
 	private int id, rating, num_votes;
 	private ArrayList<ProductLocation> locations;
-	private ArrayList<HashMap<String, String>> comments;
+	private ArrayList<Comment> comments;
 
 	public Product(String code) {
 		Config conf = Config.getInstance();
 		this.webservice = conf.getWebService();
 		this.code = code;
-		getProduct();
+		getProduct();		
+		loadComments();
+		loadLocations();
 	}
 
 	public void getProduct() {
@@ -44,8 +45,6 @@ public class Product {
 					name = jo.getString("name");
 					setImage(jo.getString("image"));
 					description = jo.getString("description");
-					locations = getLocations();
-					comments = getComments();
 				}
 			}
 		} catch (Exception e) {
@@ -53,9 +52,9 @@ public class Product {
 		}
 	}
 	
-	private ArrayList<HashMap<String, String>> getComments() {
+	private void loadComments() {
 		String str = this.webservice + "comments/" + this.code;
-		ArrayList<HashMap<String, String>> comments = new ArrayList<HashMap<String,String>>();
+		comments = new ArrayList<Comment>();
 		try {
 			URL url = new URL(str);
 			URLConnection urlc = url.openConnection();
@@ -73,22 +72,18 @@ public class Product {
 						String name = jo2.getString("name");
 						String comm = jo2.getString("comment");
 						
-						HashMap<String, String> com = new HashMap<String, String>();
-						com.put(name, comm);
-						comments.add(com);
+						comments.add(new Comment(name, comm));
 					}
 				}
 			}
 		} catch (Exception e) {
 
 		}
-		
-		return comments;
 	}
 	
-	private ArrayList<ProductLocation> getLocations() {
+	private void loadLocations() {
 		String str = this.webservice + "locations/" + this.code;
-		ArrayList<ProductLocation> locat = new ArrayList<ProductLocation>();
+		locations = new ArrayList<ProductLocation>();
 		try {
 			URL url = new URL(str);
 			URLConnection urlc = url.openConnection();
@@ -106,15 +101,13 @@ public class Product {
 						String latitude = jo2.getString("latitude");
 						String longitude = jo2.getString("longitude");
 						
-						locat.add(new ProductLocation(latitude, longitude));
+						locations.add(new ProductLocation(latitude, longitude));
 					}
 				}
 			}
 		} catch (Exception e) {
 
 		}
-		
-		return locat;
 	}
 
 	public void setProduct() {
@@ -185,8 +178,20 @@ public class Product {
 		this.locations = locations;
 	}
 
-	public void setComments(ArrayList<HashMap<String, String>> comments) {
+
+	public ArrayList<ProductLocation> getLocations() {
+		return locations;
+	}
+
+	public ArrayList<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(ArrayList<Comment> comments) {
 		this.comments = comments;
 	}
+	
+	
+	
 
 }
