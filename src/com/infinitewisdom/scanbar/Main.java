@@ -12,21 +12,7 @@ import android.os.Bundle;
 
 import com.google.android.maps.MapActivity;
 
-public class Main extends MapActivity {
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_locations);
-    }
 
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
-}
-
-
-/*
 public class Main extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,4 +29,3 @@ public class Main extends Activity {
 
 
 }
-*/
